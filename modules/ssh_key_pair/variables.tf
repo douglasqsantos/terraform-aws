@@ -1,18 +1,22 @@
-# SSH Key Name
+# (Optional) The name for the key pair.
 variable "name" {
-  description = "Security Group Rule Name"
+  description = "(Optional) The name for the key pair."
   type        = string
   default     = "ec2-access-key"
 }
 
+# (Required) The public key material.
 variable "public_key_path" {
-  default = "~/.ssh/id_rsa.pub"
+  description = "(Required) The public key material."
   type = string
+  default = "~/.ssh/id_rsa.pub"
 }
 
-# Define tags as a Map, it is suitable for this case
+# (Optional) A map of tags to assign to the resource.
+# Note that these tags apply to the instance and not block storage devices.
+# If configured with a provider
 variable "tags" {
-  description = "A mapping of tags to assign to security group"
+  description = "(Optional) A map of tags to assign to the resource."
   type        = map(string)
   default     = {}
 }

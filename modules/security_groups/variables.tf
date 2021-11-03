@@ -1,22 +1,25 @@
-# VPC Id
 # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-vpcs.html
 # aws ec2 describe-vpcs | jq -r '.Vpcs[0].VpcId'
+# (Optional, Forces new resource) VPC ID.
 variable "vpc_id" {
-  description = "ID of the VPC where to create security group"
+  description = "(Optional, Forces new resource) VPC ID."
   type        = string
   default     = null
 }
 
-# Security Group Name
+# (Optional, Forces new resource) Name of the security group.
+# If omitted, Terraform will assign a random, unique name.
 variable "name" {
-  description = "Security Group Rule Name"
+  description = "(Optional, Forces new resource) Name of the security group. "
   type        = string
   default     = null
 }
 
-# Security Group Description
+# (Optional, Forces new resource) Security group description.
+# Defaults to Managed by Terraform. Cannot be "". NOTE: This field maps to the AWS GroupDescription attribute,
+# for which there is no Update API. If you'd like to classify your security groups in a way that can be updated, use tags.
 variable "description" {
-  description = "Security Group Description"
+  description = "(Optional, Forces new resource) Security group description."
   type        = string
   default     = "Security Group managed by Terraform"
 }
@@ -55,30 +58,29 @@ variable "rules_egress" {
   ]
 }
 
-# It will be used to the module caller
-variable "security_group_id" {
-  description = "ID of existing security group whose rules we will manage"
-  type        = string
-  default     = null
-}
-
-# Define tags as a Map, it is suitable for this case
+# (Optional) A map of tags to assign to the resource.
+# Note that these tags apply to the instance and not block storage devices.
+# If configured with a provider
 variable "tags" {
-  description = "A mapping of tags to assign to security group"
+  description = "(Optional) A map of tags to assign to the resource."
   type        = map(string)
   default     = {}
 }
 
-# Timeout to create the resource
+# (Default 10m) How long to wait for a security group to be created.
 variable "create_timeout" {
-  description = "Time to wait for a security group to be created"
+  description = "How long to wait for a security group to be created."
   type        = string
   default     = "10m"
 }
 
-# Timeout to delete the resource
+# (Default 15m) How long to retry on DependencyViolation errors during security group deletion
+# from lingering ENIs left by certain AWS services such as Elastic Load Balancing.
+# NOTE: Lambda ENIs can take up to 45 minutes to delete, which is not affected by
+# changing this customizable timeout (in version 2.31.0 and later of the Terraform AWS Provider)
+# unless it is increased above 45 minutes.
 variable "delete_timeout" {
-  description = "Time to wait for a security group to be deleted"
+  description = "(Default 15m) How long to retry on DependencyViolation errors during security group deletion"
   type        = string
-  default     = "15m"
+  default     = "20m"
 }
